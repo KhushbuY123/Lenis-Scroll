@@ -1,16 +1,19 @@
-import React from "react";
-import Banner from "./HistoryBanner";
-import Vedio from "./Vedio";
-import Handpicked from "./Handpicked";
-// import ProgressAnimation from "./ProgressAnimation";
+import React from 'react';
+import Banner from './HistoryBanner';
+import Vedio from './Vedio';
+import Handpicked from './Handpicked';
+import Sample from './Sample';
 
 const page = () => {
   return (
     <>
-      <Banner />
-      <Vedio />
-      <Handpicked />
-      {/* <ProgressAnimation/> */}
+      <div className="w-screen h-full bg-gray-900">
+        <Banner />
+        <Vedio />
+        <Handpicked />
+        {/* <Sample /> */}
+        {/* <Sample /> */}
+      </div>
     </>
   );
 };

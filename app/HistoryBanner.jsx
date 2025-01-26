@@ -1,82 +1,91 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
-import Box from "@mui/material/Box";
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
+import Box from '@mui/material/Box';
+import { motion, useAnimation } from 'framer-motion';
+import Lenis from 'lenis';
 
 const HistoryBanner = () => {
   const BannerSvgRef = useRef(null);
   const [scrollOffset, setScrollOffset] = useState(0);
+  const controls = useAnimation(); // Framer Motion controls
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY; // How much the user has scrolled vertically
-      const windowHeight = window.innerHeight; // Height of the visible part of the page
-      const docHeight = document.documentElement.scrollHeight; // Total height of the page
+    const lenis = new Lenis({
+      duration: 1.2, // Smooth scrolling duration
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing function
+    });
 
-      // Calculate total scroll progress as a value between 0 and 1
+    const handleScroll = (e) => {
+      const scrollTop = lenis.scroll; // Lenis scroll progress
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      // Calculate normalized scroll progress (0 to 1)
       const totalScroll = scrollTop / (docHeight - windowHeight);
-      setScrollOffset(totalScroll); // Save this value to state
+      setScrollOffset(totalScroll);
     };
 
-    // Attach the `scroll` event listener
-    window.addEventListener("scroll", handleScroll);
+    // Start Lenis and attach its scroll listener
+    lenis.on('scroll', handleScroll);
+    const animate = (time) => {
+      lenis.raf(time);
+      requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
 
-    // Clean up the event listener when the component unmounts
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Cleanup on unmount
+    return () => {
+      lenis.destroy();
+    };
   }, []);
 
   useEffect(() => {
-    const updatePathAnimation = (svgRef, startOffset, endOffset) => {
-      const svg = svgRef.current; // Access the SVG element
-      if (svg) {
-        const paths = svg.querySelectorAll(".animated-path"); // Find paths with the "animated-path" class
-        paths.forEach((path) => {
-          const pathLength = path.getTotalLength(); // Get the total length of the path
-          const progress = Math.min(
-            Math.max(
-              (scrollOffset - startOffset) / (endOffset - startOffset),
-              0
-            ),
-            1
-          ); // Normalize progress between 0 and 1
+    const svg = BannerSvgRef.current;
+    if (svg) {
+      const paths = svg.querySelectorAll('.animated-path');
+      paths.forEach((path) => {
+        const pathLength = path.getTotalLength();
+        const progress = Math.min(Math.max(scrollOffset * 3.2, 0), 1); // Adjust progress speed
+        path.style.strokeDasharray = pathLength;
+        path.style.strokeDashoffset = pathLength - pathLength * progress;
+      });
+    }
 
-          // Update path animation
-          path.style.strokeDasharray = pathLength; // Set the length of the stroke
-          path.style.strokeDashoffset = pathLength - pathLength * progress; // Adjust based on progress
-        });
-      }
-    };
-
-    updatePathAnimation(BannerSvgRef, 0, 0.5); // Trigger the animation
-  }, [scrollOffset]);
+    // Trigger Framer Motion animation
+    controls.start({
+      opacity: scrollOffset > 0.2 ? 1 : 0,
+      y: scrollOffset > 0.2 ? 0 : 50,
+    });
+  }, [scrollOffset, controls]);
 
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        position: "relative",
-        background: "black",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        position: 'relative',
+        background: 'black',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         zIndex: 50,
       }}
     >
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          transform: "translateY(-50%)",
-          height: "8rem",
-          width: "8rem",
-          borderRadius: "50%",
-          background: "blue",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "white",
+          position: 'absolute',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          height: '8rem',
+          width: '8rem',
+          borderRadius: '50%',
+          background: 'blue',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
         }}
       >
         2020
@@ -85,15 +94,15 @@ const HistoryBanner = () => {
       <Box
         ref={BannerSvgRef}
         sx={{
-          position: "absolute",
-          top: "58.5%",
-          left: "47%",
+          position: 'absolute',
+          top: '57.5%',
+          left: '47%',
         }}
       >
         <svg
           width="119"
-          height="715"
-          viewBox="0 0 119 715"
+          height="620"
+          viewBox="0 0 119 620"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
@@ -110,7 +119,7 @@ const HistoryBanner = () => {
               x1="59.3098"
               y1="0.999997"
               x2="59.3098"
-              y2="714"
+              y2="620"
               gradientUnits="userSpaceOnUse"
             >
               <stop stopColor="#FEFCF7"></stop>
