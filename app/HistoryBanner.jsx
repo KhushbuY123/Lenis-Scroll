@@ -28,7 +28,7 @@ const HistoryBanner = () => {
       if (container) {
         const containerRect = container.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        console.log(containerRect.top, containerRect.bottom, viewportHeight);
+        // console.log(containerRect.top, containerRect.bottom, viewportHeight);
         const totalScrollableDistance = containerRect.height;
         const progress = Math.min(
           Math.max(1 - containerRect.bottom / totalScrollableDistance, 0),
@@ -66,7 +66,7 @@ const HistoryBanner = () => {
     });
   }, [progress, controls]);
 
-  console.log(progress);
+  // console.log(progress);
   return (
     <motion.div
       ref={scrollContainerRef}
@@ -84,7 +84,6 @@ const HistoryBanner = () => {
         background: 'black',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        zIndex: 1,
       }}
     >
       <Box
@@ -111,7 +110,7 @@ const HistoryBanner = () => {
           position: 'absolute',
           top: '57.5%',
           left: '47%',
-          zIndex: 3,
+          zIndex: 1000,
         }}
       >
         <svg
