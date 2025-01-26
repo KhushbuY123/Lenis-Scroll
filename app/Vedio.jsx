@@ -77,7 +77,7 @@ const Vedio = () => {
         position: 'relative',
         height: '150vh', // Ensures the page is scrollable
         zIndex: 40,
-        background: 'blue',
+        background: 'slategray',
       }}
     >
       {/* Foreground Content */}

@@ -1,6 +1,6 @@
-'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import Box from '@mui/material/Box';
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import Box from "@mui/material/Box";
 
 const Handpicked = () => {
   const HandpickedSvgRef = useRef(null);
@@ -17,8 +17,8 @@ const Handpicked = () => {
       setScrollOffset(totalScroll);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // // Update the primary SVG paths
@@ -40,7 +40,7 @@ const Handpicked = () => {
     const updatePathAnimation = (HandpickedSvgRef, startOffset, endOffset) => {
       const svg = HandpickedSvgRef.current;
       if (svg) {
-        const paths = svg.querySelectorAll('.man-svg-path');
+        const paths = svg.querySelectorAll(".man-svg-path");
         paths.forEach((path) => {
           const pathLength = path.getTotalLength();
           const progress = Math.min(
@@ -62,22 +62,22 @@ const Handpicked = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        position: 'relative',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        position: "relative",
         zIndex: 0,
-        background: 'black',
+        background: "black",
       }}
     >
       <Box
         ref={HandpickedSvgRef}
         sx={{
-          position: 'absolute',
-          top: '45.5%',
-          left: '77%',
+          position: "absolute",
+          top: "45.5%",
+          left: "77%",
         }}
       >
         <svg
@@ -971,6 +971,20 @@ const Handpicked = () => {
           ></path>
         </svg>
       </Box>
+      <Box sx={{
+        color:"white",
+        border: "1px solid white",
+        height:"75vh",
+        width:"25vw",
+        borderRadius:"100%",
+        display:'flex',
+        justifyContent:"center",
+        alignItems:"center",
+        position:"absolute",
+        top:"8%",
+        background:"white",
+        opacity:'0.8'
+      }}>gi</Box>
     </Box>
   );
 };
