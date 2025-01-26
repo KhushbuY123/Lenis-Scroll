@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/system';
@@ -16,13 +17,14 @@ const Vedio = () => {
   const BannerSvgRef = useRef(null);
   const [scrollOffset, setScrollOffset] = useState(0);
 
+  // Calculate scroll offset as a percentage
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const windowHeight = window.innerHeight;
       const docHeight = document.documentElement.scrollHeight;
 
-      const totalScroll = scrollTop / (docHeight - windowHeight);
+      const totalScroll = scrollTop / (docHeight - windowHeight); // Normalize scroll value
       setScrollOffset(totalScroll);
     };
 
@@ -30,6 +32,7 @@ const Vedio = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Update the primary SVG paths
   useEffect(() => {
     const svg = svgRef.current;
     if (svg) {
@@ -37,20 +40,20 @@ const Vedio = () => {
       paths.forEach((path) => {
         const pathLength = path.getTotalLength();
         path.style.strokeDasharray = pathLength;
-        // console.log(pathLength, scrollOffset);
         path.style.strokeDashoffset =
-          pathLength * (1 - scrollOffset * 3.6 + 0.95);
+          pathLength * (1 - scrollOffset * 3.6 + 0.95); // Update based on scroll
       });
     }
   }, [scrollOffset]);
 
+  // Update the second SVG paths when scrolled 50%
   useEffect(() => {
     const updatePathAnimation = (svgRef, startOffset, endOffset) => {
-      const svg = svgRef.current; // Access the SVG element
+      const svg = svgRef.current;
       if (svg) {
-        const paths = svg.querySelectorAll('.animated-path'); // Find paths with the "animated-path" class
+        const paths = svg.querySelectorAll('.animated-path');
         paths.forEach((path) => {
-          const pathLength = path.getTotalLength(); // Get the total length of the path
+          const pathLength = path.getTotalLength();
           const progress = Math.min(
             Math.max(
               (scrollOffset - startOffset) / (endOffset - startOffset),
@@ -58,23 +61,21 @@ const Vedio = () => {
             ),
             1
           ); // Normalize progress between 0 and 1
-          // console.log(progress);
-          // Update path animation
           path.style.strokeDasharray = pathLength;
-          console.log(pathLength, progress, scrollOffset);
-          path.style.strokeDashoffset = pathLength - pathLength * progress; // Adjust based on progress
+          path.style.strokeDashoffset =
+            pathLength - pathLength * progress * 1.7 + 50;
         });
       }
     };
 
-    updatePathAnimation(BannerSvgRef, 0, 0.5); // Trigger the animation
+    updatePathAnimation(BannerSvgRef, 0.5, 1); // Trigger animation at 50% scroll
   }, [scrollOffset]);
 
   return (
     <Box
       sx={{
         position: 'relative',
-        height: '150vh',
+        height: '150vh', // Ensures the page is scrollable
         zIndex: 40,
         background: 'blue',
       }}
@@ -158,7 +159,7 @@ const Vedio = () => {
               fontWeight="bold"
               color="#341212"
             >
-              Lorem ipsumdd
+              Lorem ipsum
             </Typography>
             <Typography
               variant="body1"
@@ -173,6 +174,8 @@ const Vedio = () => {
           </Box>
         </Box>
       </Box>
+
+      {/* Second SVG */}
       <Box
         sx={{
           position: 'absolute',
