@@ -63,7 +63,7 @@ const Vedio = () => {
           ); // Normalize progress between 0 and 1
           path.style.strokeDasharray = pathLength;
           path.style.strokeDashoffset =
-            pathLength - pathLength * progress * 1.7 + 50;
+            pathLength - pathLength * progress * 1.2 + 50;
         });
       }
     };
@@ -184,7 +184,7 @@ const Vedio = () => {
         }}
         ref={BannerSvgRef}
       >
-        <svg
+        {/* <svg
           width="119"
           height="660"
           viewBox="0 0 119 715"
@@ -209,6 +209,38 @@ const Vedio = () => {
             >
               <stop stopColor="#FEFCF7"></stop>
               <stop offset="1" stopColor="#FF652D"></stop>
+            </linearGradient>
+          </defs>
+        </svg> */}
+
+        <svg
+          width="532"
+          height="1018"
+          viewBox="0 0 532 1018"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <path
+            className="animated-path"
+            d="M27.9999 1C153 295 -130.194 407.564 85.9999 464C210.5 496.5 287.5 612 251 881.5C214.5 1151 347.791 937.098 360.5 918.5C422 828.5 472.5 737.5 531 868"
+            stroke="url(#g2)"
+            strokeWidth="1.5"
+            // style="stroke-dashoffset: 0; stroke-dasharray: none;"
+          ></path>
+          <defs
+          // style="stroke-dashoffset: 0.001; stroke-dasharray: none;"
+          >
+            <linearGradient
+              id="g2"
+              x1="266.372"
+              y1="1"
+              x2="266.372"
+              y2="1016.56"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#FF652D"></stop>
+              <stop offset="1" stopColor="#FEFCF7"></stop>
             </linearGradient>
           </defs>
         </svg>
