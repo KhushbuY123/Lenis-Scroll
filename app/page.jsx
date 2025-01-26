@@ -9,7 +9,7 @@ import { Last } from "./Last";
 const page = () => {
   return (
     <>
-      <div className="w-screen h-full bg-gray-900">
+      <div className="w-screen h-full">
         <Banner />
         <Vedio />
         <Handpicked />
