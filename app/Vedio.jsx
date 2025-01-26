@@ -1,18 +1,19 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography } from "@mui/material";
-import { styled } from "@mui/system";
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, Typography } from '@mui/material';
+import { styled } from '@mui/system';
 
 const StyledSvgContainer = styled(Box)({
-  position: "absolute",
+  position: 'absolute',
   inset: 0,
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 });
 
 const Vedio = () => {
   const svgRef = useRef(null);
+  const BannerSvgRef = useRef(null);
   const [scrollOffset, setScrollOffset] = useState(0);
 
   useEffect(() => {
@@ -25,44 +26,72 @@ const Vedio = () => {
       setScrollOffset(totalScroll);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
     const svg = svgRef.current;
     if (svg) {
-      const paths = svg.querySelectorAll(".half_line");
+      const paths = svg.querySelectorAll('.half_line');
       paths.forEach((path) => {
         const pathLength = path.getTotalLength();
-        path.style.strokeDasharray = pathLength + 500;
-        path.style.strokeDashoffset = pathLength * (1 - scrollOffset);
+        path.style.strokeDasharray = pathLength;
+        // console.log(pathLength, scrollOffset);
+        path.style.strokeDashoffset =
+          pathLength * (1 - scrollOffset * 3.6 + 0.95);
       });
     }
+  }, [scrollOffset]);
+
+  useEffect(() => {
+    const updatePathAnimation = (svgRef, startOffset, endOffset) => {
+      const svg = svgRef.current; // Access the SVG element
+      if (svg) {
+        const paths = svg.querySelectorAll('.animated-path'); // Find paths with the "animated-path" class
+        paths.forEach((path) => {
+          const pathLength = path.getTotalLength(); // Get the total length of the path
+          const progress = Math.min(
+            Math.max(
+              (scrollOffset - startOffset) / (endOffset - startOffset),
+              0
+            ),
+            1
+          ); // Normalize progress between 0 and 1
+          // console.log(progress);
+          // Update path animation
+          path.style.strokeDasharray = pathLength;
+          console.log(pathLength, progress, scrollOffset);
+          path.style.strokeDashoffset = pathLength - pathLength * progress; // Adjust based on progress
+        });
+      }
+    };
+
+    updatePathAnimation(BannerSvgRef, 0, 0.5); // Trigger the animation
   }, [scrollOffset]);
 
   return (
     <Box
       sx={{
-        position: "relative",
-        height: "150vh",
+        position: 'relative',
+        height: '150vh',
         zIndex: 40,
-        background: "blue",
+        background: 'blue',
       }}
     >
       {/* Foreground Content */}
       <Box
         sx={{
-          position: "relative",
-          width: "22em",
-          height: "32em",
-          margin: "0 auto",
-          textAlign: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transform: "translateY(50%)",
-          color: "white",
+          position: 'relative',
+          width: '22em',
+          height: '32em',
+          margin: '0 auto',
+          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: 'translateY(50%)',
+          color: 'white',
         }}
       >
         {/* SVG Path Animation */}
@@ -93,16 +122,16 @@ const Vedio = () => {
         {/* Inner Text and Background */}
         <Box
           sx={{
-            position: "absolute",
-            bottom: "1em",
-            left: "1em",
-            right: "1em",
-            top: "1em",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#341212",
+            position: 'absolute',
+            bottom: '1em',
+            left: '1em',
+            right: '1em',
+            top: '1em',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#341212',
             p: 4,
           }}
         >
@@ -122,16 +151,21 @@ const Vedio = () => {
               />
             </svg>
           </StyledSvgContainer>
-          <Box sx={{ position: "relative", zIndex: 10, textAlign: "center" }}>
+          <Box sx={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
             <Typography
               variant="h5"
               component="h5"
               fontWeight="bold"
               color="#341212"
             >
-              Lorem ipsum
+              Lorem ipsumdd
             </Typography>
-            <Typography variant="body1" sx={{ mt: 2 }} color="#341212">
+            <Typography
+              variant="body1"
+              sx={{ mt: 2 }}
+              color="#341212"
+              zIndex={30}
+            >
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem cum
               similique dignissimos mollitia repudiandae atque quae porro in
               assumenda quam.
@@ -141,14 +175,15 @@ const Vedio = () => {
       </Box>
       <Box
         sx={{
-          position: "absolute",
-          top: "69%",
-          left: "47%",
+          position: 'absolute',
+          top: '61%',
+          left: '47%',
         }}
+        ref={BannerSvgRef}
       >
         <svg
           width="119"
-          height="482"
+          height="660"
           viewBox="0 0 119 715"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
