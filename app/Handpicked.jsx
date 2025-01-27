@@ -1,3 +1,4 @@
+
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -12,6 +13,7 @@ const StyledSvgContainer = styled(Box)({
 });
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
+
 
 const Handpicked = () => {
   const HandpickedSvgRef = useRef(null);
@@ -43,13 +45,33 @@ const Handpicked = () => {
         setProgress(progress);
       }
     };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
     lenis.on('scroll', calculateProgress);
     window.addEventListener('resize', calculateProgress);
 
-    return () => {
-      lenis.destroy();
-      window.removeEventListener('resize', calculateProgress);
+
+  // Update the second SVG paths when scrolled 50%
+  useEffect(() => {
+    const updatePathAnimation = (HandpickedSvgRef, startOffset, endOffset) => {
+      const svg = HandpickedSvgRef.current;
+      if (svg) {
+        const paths = svg.querySelectorAll(".man-svg-path");
+        paths.forEach((path) => {
+          const pathLength = path.getTotalLength();
+          const progress = Math.min(
+            Math.max(
+              (scrollOffset - startOffset) / (endOffset - startOffset),
+              0
+            ),
+            1
+          ); // Normalize progress between 0 and 1
+          path.style.strokeDasharray = pathLength;
+          path.style.strokeDashoffset = pathLength - pathLength * progress;
+        });
+      }
     };
   }, []);
 
@@ -74,22 +96,22 @@ const Handpicked = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        position: 'relative',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        position: "relative",
         zIndex: 0,
-        background: 'black',
+        background: "black",
       }}
       ref={scrollContainerRef3}
     >
       <Box
         sx={{
-          position: 'absolute',
-          top: '45.5%',
-          left: '77%',
+          position: "absolute",
+          top: "45.5%",
+          left: "77%",
         }}
         ref={HandpickedSvgRef}
       >
@@ -984,6 +1006,20 @@ const Handpicked = () => {
           ></path>
         </svg>
       </Box>
+      <Box sx={{
+        color:"white",
+        border: "1px solid white",
+        height:"75vh",
+        width:"25vw",
+        borderRadius:"100%",
+        display:'flex',
+        justifyContent:"center",
+        alignItems:"center",
+        position:"absolute",
+        top:"8%",
+        background:"white",
+        opacity:'0.8'
+      }}>gi</Box>
     </Box>
   );
 };
