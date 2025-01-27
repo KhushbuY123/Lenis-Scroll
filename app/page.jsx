@@ -4,7 +4,7 @@ import Handpicked from './Handpicked';
 import Sample from './Sample';
 import HistoryBanner from './HistoryBanner';
 import Banner2 from './Banner2';
-
+// comment
 const page = () => {
   return (
     <>
