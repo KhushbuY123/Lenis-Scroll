@@ -1,4 +1,4 @@
-
+// com
 import React from 'react';
 import Vedio from './Vedio';
 import Handpicked from './Handpicked';
