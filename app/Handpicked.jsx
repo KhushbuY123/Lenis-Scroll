@@ -1,39 +1,57 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
-import Box from "@mui/material/Box";
+
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
+
+import { useAnimation } from 'framer-motion';
+import Lenis from 'lenis';
+const StyledSvgContainer = styled(Box)({
+  position: 'absolute',
+  inset: 0,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+import { Box } from '@mui/material';
+import { styled } from '@mui/system';
+
 
 const Handpicked = () => {
   const HandpickedSvgRef = useRef(null);
-
-  const [scrollOffset, setScrollOffset] = useState(0);
+  const scrollContainerRef3 = useRef(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const docHeight = document.documentElement.scrollHeight;
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    });
 
-      const totalScroll = scrollTop / (docHeight - windowHeight); // Normalize scroll value
-      setScrollOffset(totalScroll);
+    const animate = (time) => {
+      lenis.raf(time);
+      requestAnimationFrame(animate);
     };
+    requestAnimationFrame(animate);
 
+    const calculateProgress = () => {
+      const container = scrollContainerRef3.current;
+      if (container) {
+        const containerRect = container.getBoundingClientRect();
+        const totalScrollableDistance = containerRect.height;
+        const progress = Math.min(
+          Math.max(1 - containerRect.bottom / totalScrollableDistance, 0),
+          1
+        );
+        setProgress(progress);
+      }
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // // Update the primary SVG paths
-  // useEffect(() => {
-  //   const svg = HandpickedSvgRef.current;
-  //   if (svg) {
-  //     const paths = svg.querySelectorAll('.half_line');
-  //     paths.forEach((path) => {
-  //       const pathLength = path.getTotalLength();
-  //       path.style.strokeDasharray = pathLength;
-  //       path.style.strokeDashoffset =
-  //         pathLength * (1 - scrollOffset * 3.6 + 0.95); // Update based on scroll
-  //     });
-  //   }
-  // }, [scrollOffset]);
+    lenis.on('scroll', calculateProgress);
+    window.addEventListener('resize', calculateProgress);
+
 
   // Update the second SVG paths when scrolled 50%
   useEffect(() => {
@@ -55,9 +73,25 @@ const Handpicked = () => {
         });
       }
     };
+  }, []);
 
-    updatePathAnimation(HandpickedSvgRef, 0.5, 1); // Trigger animation at 50% scroll
-  }, [scrollOffset]);
+  useEffect(() => {
+    const svg = HandpickedSvgRef.current;
+    if (svg) {
+      const paths = svg.querySelectorAll('.man-svg-path');
+      paths.forEach((path) => {
+        const pathLength = path.getTotalLength();
+        path.style.strokeDasharray = pathLength;
+
+        // Adjust the progress from 0.5 onwards
+        const adjustedProgress = Math.min(Math.max(progress, 0), 0.5);
+
+        console.log(progress, adjustedProgress);
+        path.style.strokeDashoffset =
+          pathLength - pathLength * adjustedProgress * 2 ;
+      });
+    }
+  }, [progress]);
 
   return (
     <Box
@@ -71,14 +105,15 @@ const Handpicked = () => {
         zIndex: 0,
         background: "black",
       }}
+      ref={scrollContainerRef3}
     >
       <Box
-        ref={HandpickedSvgRef}
         sx={{
           position: "absolute",
           top: "45.5%",
           left: "77%",
         }}
+        ref={HandpickedSvgRef}
       >
         <svg
           width="203"
