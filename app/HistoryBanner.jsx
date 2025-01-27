@@ -6,44 +6,36 @@ import Lenis from 'lenis';
 
 const HistoryBanner = () => {
   const BannerSvgRef = useRef(null);
-  const scrollContainerRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-  const controls = useAnimation();
+  const [scrollOffset, setScrollOffset] = useState(0);
+  const controls = useAnimation(); // Framer Motion controls
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smooth: true,
+      duration: 1.2, // Smooth scrolling duration
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing function
     });
 
+    const handleScroll = (e) => {
+      const scrollTop = lenis.scroll; // Lenis scroll progress
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      // Calculate normalized scroll progress (0 to 1)
+      const totalScroll = scrollTop / (docHeight - windowHeight);
+      setScrollOffset(totalScroll);
+    };
+
+    // Start Lenis and attach its scroll listener
+    lenis.on('scroll', handleScroll);
     const animate = (time) => {
       lenis.raf(time);
       requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
 
-    const calculateProgress = () => {
-      const container = scrollContainerRef.current;
-      if (container) {
-        const containerRect = container.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        // console.log(containerRect.top, containerRect.bottom, viewportHeight);
-        const totalScrollableDistance = containerRect.height;
-        const progress = Math.min(
-          Math.max(1 - containerRect.bottom / totalScrollableDistance, 0),
-          1
-        );
-        setProgress(progress);
-      }
-    };
-
-    lenis.on('scroll', calculateProgress);
-    window.addEventListener('resize', calculateProgress);
-
+    // Cleanup on unmount
     return () => {
       lenis.destroy();
-      window.removeEventListener('resize', calculateProgress);
     };
   }, []);
 
@@ -53,28 +45,22 @@ const HistoryBanner = () => {
       const paths = svg.querySelectorAll('.animated-path');
       paths.forEach((path) => {
         const pathLength = path.getTotalLength();
-        const adjustedProgress = Math.min(Math.max(progress, 0), 1);
+        const progress = Math.min(Math.max(scrollOffset * 3.2, 0), 1); // Adjust progress speed
         path.style.strokeDasharray = pathLength;
-        path.style.strokeDashoffset =
-          pathLength - pathLength * adjustedProgress;
+        path.style.strokeDashoffset = pathLength - pathLength * progress;
       });
     }
 
+    // Trigger Framer Motion animation
     controls.start({
-      opacity: progress > 0.2 ? 1 : 0,
-      y: progress > 0.2 ? 0 : 50,
+      opacity: scrollOffset > 0.2 ? 1 : 0,
+      y: scrollOffset > 0.2 ? 0 : 50,
     });
-  }, [progress, controls]);
+  }, [scrollOffset, controls]);
 
-  // console.log(progress);
   return (
-    <motion.div
-      ref={scrollContainerRef}
-      style={{
-        height: '100vh',
-        // overflowY: 'auto',
-        // position: 'relative',
-        background: 'black',
+    <Box
+      sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -84,6 +70,7 @@ const HistoryBanner = () => {
         background: 'black',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        zIndex: 50,
       }}
     >
       <Box
@@ -110,7 +97,6 @@ const HistoryBanner = () => {
           position: 'absolute',
           top: '57.5%',
           left: '47%',
-          zIndex: 1000,
         }}
       >
         <svg
@@ -142,7 +128,7 @@ const HistoryBanner = () => {
           </defs>
         </svg>
       </Box>
-    </motion.div>
+    </Box>
   );
 };
 
